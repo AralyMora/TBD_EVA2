@@ -1,0 +1,230 @@
+EVA_2_4_UNION
+Microsoft Windows [Versión 10.0.26100.6584]
+(c) Microsoft Corporation. Todos los derechos reservados.
+
+C:\Users\Hp>mysqlsh
+MySQL Shell 8.0.44
+
+Copyright (c) 2016, 2025, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect --mc root@localhost
+Creating a Classic session to 'root@localhost'
+Fetching global names for auto-completion... Press ^C to stop.
+Your MySQL connection id is 14
+Server version: 8.0.44 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:3306 ssl  SQL > use taller2;
+Default schema set to `taller2`.
+Fetching global names, object names from `taller2` for auto-completion... Press ^C to stop.
+ MySQL  localhost:3306 ssl  taller2  SQL > show tables;
++-------------------+
+| Tables_in_taller2 |
++-------------------+
+| categoria         |
+| cliente           |
+| direccion         |
+| producto          |
+| tabla_b           |
+| venta             |
+| venta_detalle     |
++-------------------+
+7 rows in set (0.0034 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta_detalle;
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table         | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta_detalle | CREATE TABLE `venta_detalle` (
+  `id_venta_detalle` int NOT NULL AUTO_INCREMENT,
+  `id_venta` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  PRIMARY KEY (`id_venta_detalle`),
+  KEY `id_producto` (`id_producto`),
+  KEY `id_venta` (`id_venta`),
+  CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`),
+  CONSTRAINT `venta_detalle_ibfk_3` FOREIGN KEY (`id_venta`) REFERENCES `venta` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0013 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                                                                  |
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int DEFAULT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0017 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table producto;
++----------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table    | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
++----------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| producto | CREATE TABLE `producto` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `precio` decimal(8,2) DEFAULT NULL,
+  `id_categoria` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_categoria` (`id_categoria`),
+  CONSTRAINT `producto_ibfk_1` FOREIGN KEY (`id_categoria`) REFERENCES `categoria` (`id_categoria`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++----------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0017 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table cliente;
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table   | Create Table                                                                                                                                                                                                                                                                                                                                        |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| cliente | CREATE TABLE `cliente` (
+  `id_cliente` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `apellidos` varchar(50) DEFAULT NULL,
+  `tipo` enum('Fisica','Moral') DEFAULT 'Fisica',
+  `RFC` varchar(13) DEFAULT NULL,
+  PRIMARY KEY (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0019 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >
+ MySQL  localhost:3306 ssl  taller2  SQL > drop table venta;
+ERROR: 3730 (HY000): Cannot drop table 'venta' referenced by a foreign key constraint 'venta_detalle_ibfk_3' on table 'venta_detalle'.
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
+|                8 |        3 |           4 |        7 |
++------------------+----------+-------------+----------+
+6 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table tablaa (id int, valor varchar(10));
+Query OK, 0 rows affected (0.0403 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table tablab (id int, valor varchar(10));
+Query OK, 0 rows affected (0.0358 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into tablaa values (1, "A"), (2, "B"), (3, "C"), (4, "D");
+Query OK, 4 rows affected (0.0175 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into tablab values (1, "X"), (2, "Y"), (3, "Z"), (4, "A"), (5, "B");
+Query OK, 5 rows affected (0.0148 sec)
+
+Records: 5  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from tablaa;
++----+-------+
+| id | valor |
++----+-------+
+|  1 | A     |
+|  2 | B     |
+|  3 | C     |
+|  4 | D     |
++----+-------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from tablab;
++----+-------+
+| id | valor |
++----+-------+
+|  1 | X     |
+|  2 | Y     |
+|  3 | Z     |
+|  4 | A     |
+|  5 | B     |
++----+-------+
+5 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from tablaa union select * from tablab;
++----+-------+
+| id | valor |
++----+-------+
+|  1 | A     |
+|  2 | B     |
+|  3 | C     |
+|  4 | D     |
+|  1 | X     |
+|  2 | Y     |
+|  3 | Z     |
+|  4 | A     |
+|  5 | B     |
++----+-------+
+9 rows in set (0.0119 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from tablaa
+                                        -> where valor in (select * from tablab);
+ERROR: 1241 (21000): Operand should contain 1 column(s)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from tablaa
+                                        -> where valor in (select valor from tablab);
++----+-------+
+| id | valor |
++----+-------+
+|  1 | A     |
+|  2 | B     |
++----+-------+
+2 rows in set (0.0017 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from tablaa where valor not in (select valor from tablab);
++----+-------+
+| id | valor |
++----+-------+
+|  3 | C     |
+|  4 | D     |
++----+-------+
+2 rows in set (0.0012 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |       NULL |
+|        3 | 2026-03-20 |          7 |
+|        5 | 2026-12-12 |          7 |
++----------+------------+------------+
+3 rows in set (0.0119 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+--------+-----------+--------+---------------+
+| id_cliente | nombre | apellidos | tipo   | RFC           |
++------------+--------+-----------+--------+---------------+
+|          4 | Mateo  | NULL      | Fisica | GUEA850101TX1 |
+|          6 | Paola  | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse   | NULL      | Fisica | LAPI900722H12 |
++------------+--------+-----------+--------+---------------+
+4 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > inset into  cliente (nombre, apellidos, tipo, rfc)
+                                        -> ^C
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from cliente where id_cliente in (select id_cliente from venta);
++------------+--------+-----------+--------+---------------+
+| id_cliente | nombre | apellidos | tipo   | RFC           |
++------------+--------+-----------+--------+---------------+
+|          7 | Pamela | Estrada   | Fisica | 323srvs234244 |
++------------+--------+-----------+--------+---------------+
+1 row in set (0.0013 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente where id_cliente not in (select id_cliente from venta);
+Empty set (0.0011 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > update venta set id_cliente = 4 where id_cliente is null;
+Query OK, 1 row affected (0.0048 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente where id_cliente not in (select id_cliente from venta);
++------------+--------+-----------+--------+---------------+
+| id_cliente | nombre | apellidos | tipo   | RFC           |
++------------+--------+-----------+--------+---------------+
+|          6 | Paola  | Sanchez   | Fisica | CLI6RFC12345  |
+|          9 | JOse   | NULL      | Fisica | LAPI900722H12 |
++------------+--------+-----------+--------+---------------+
+2 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from cliente where id_cliente not in (select distinct id_cliente from venta);
++------------+--------+-----------+--------+---------------+
+| id_cliente | nombre | apellidos | tipo   | RFC           |
++------------+--------+-----------+--------+---------------+
+|          6 | Paola  | Sanchez   | Fisica | CLI6RFC12345  |
+|          9 | JOse   | NULL      | Fisica | LAPI900722H12 |
++------------+--------+-----------+--------+---------------+
+2 rows in set (0.0011 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >

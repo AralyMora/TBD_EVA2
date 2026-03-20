@@ -1,0 +1,448 @@
+EVA_2_3_
+MySQL Shell 8.0.44
+
+Copyright (c) 2016, 2025, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect --mc root@localhost
+Creating a Classic session to 'root@localhost'
+Fetching global names for auto-completion... Press ^C to stop.
+Your MySQL connection id is 11
+Server version: 8.0.44 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:3306 ssl  SQL > use taller2;
+Default schema set to `taller2`.
+Fetching global names, object names from `taller2` for auto-completion... Press ^C to stop.
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          4 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          5 | PEDRO                 | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola                 | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela                | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse                  | NULL      | Fisica | LAPI900722H12 |
++------------+-----------------------+-----------+--------+---------------+
+6 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from producto;
++----+---------------+--------+
+| id | nombre        | precio |
++----+---------------+--------+
+|  1 | Jabón 150g    |  18.50 |
+|  2 | Detergente 1L |  45.00 |
+|  3 | Leche 1L      |  27.50 |
+|  4 | Pasta Dental  |  38.00 |
++----+---------------+--------+
+4 rows in set (0.0064 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          2 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+3 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                4 |        2 |           1 |        5 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
+|                8 |        3 |           4 |        7 |
++------------------+----------+-------------+----------+
+7 rows in set (0.0029 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > desc venta;
++------------+------+------+-----+---------+----------------+
+| Field      | Type | Null | Key | Default | Extra          |
++------------+------+------+-----+---------+----------------+
+| id_venta   | int  | NO   | PRI | NULL    | auto_increment |
+| fecha      | date | NO   |     | NULL    |                |
+| id_cliente | int  | NO   | MUL | NULL    |                |
++------------+------+------+-----+---------+----------------+
+3 rows in set (0.0027 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                                                             |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta_detalle;
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table         | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta_detalle | CREATE TABLE `venta_detalle` (
+  `id_venta_detalle` int NOT NULL AUTO_INCREMENT,
+  `id_venta` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  PRIMARY KEY (`id_venta_detalle`),
+  KEY `id_venta` (`id_venta`),
+  KEY `id_producto` (`id_producto`),
+  CONSTRAINT `venta_detalle_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `venta` (`id_venta`),
+  CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0011 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >  alter table venta_detalle drop constraint venta_detalle_ibfk_1;
+Query OK, 0 rows affected (0.0176 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta_detalle add constraint foreign key (id_venta) references venta(id_venta) on delete cascade on update cascade;
+Query OK, 7 rows affected (0.1005 sec)
+
+Records: 7  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta_detalle;'
+
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table         | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta_detalle | CREATE TABLE `venta_detalle` (
+  `id_venta_detalle` int NOT NULL AUTO_INCREMENT,
+  `id_venta` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  PRIMARY KEY (`id_venta_detalle`),
+  KEY `id_producto` (`id_producto`),
+  KEY `id_venta` (`id_venta`),
+  CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`),
+  CONSTRAINT `venta_detalle_ibfk_3` FOREIGN KEY (`id_venta`) REFERENCES `venta` (`id_venta`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0008 sec)
+                                        '> ;
+                                        '> ^C
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          2 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+3 rows in set (0.0021 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                4 |        2 |           1 |        5 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
+|                8 |        3 |           4 |        7 |
++------------------+----------+-------------+----------+
+7 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          4 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          5 | PEDRO                 | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola                 | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela                | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse                  | NULL      | Fisica | LAPI900722H12 |
++------------+-----------------------+-----------+--------+---------------+
+6 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from cliente where id_cliente = 2;
+Query OK, 1 row affected (0.0140 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+2 rows in set (0.0005 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
+|                8 |        3 |           4 |        7 |
++------------------+----------+-------------+----------+
+6 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+--------------------+-----------+--------+---------------+
+| id_cliente | nombre             | apellidos | tipo   | RFC           |
++------------+--------------------+-----------+--------+---------------+
+|          4 | Abarrotes El Güero | NULL      | Fisica | GUEA850101TX1 |
+|          5 | PEDRO              | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola              | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela             | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse               | NULL      | Fisica | LAPI900722H12 |
++------------+--------------------+-----------+--------+---------------+
+5 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                                                             |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta change id_cliente id_cliente int;
+Query OK, 0 rows affected (0.1115 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > desc venta;
++------------+------+------+-----+---------+----------------+
+| Field      | Type | Null | Key | Default | Extra          |
++------------+------+------+-----+---------+----------------+
+| id_venta   | int  | NO   | PRI | NULL    | auto_increment |
+| fecha      | date | NO   |     | NULL    |                |
+| id_cliente | int  | YES  | MUL | NULL    |                |
++------------+------+------+-----+---------+----------------+
+3 rows in set (0.0032 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta drop constraint venta_ibfk_1
+                                        -> ;
+Query OK, 0 rows affected (0.0344 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  alter table venta add constraint foreign key(id_cliente) references cliente(id_Cliente) on delete set null on update cascade;
+Query OK, 2 rows affected (0.0897 sec)
+
+Records: 2  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  show create table cliente;
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table   | Create Table                                                                                                                                                                                                                                                                                                                                        |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| cliente | CREATE TABLE `cliente` (
+  `id_cliente` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  `apellidos` varchar(50) DEFAULT NULL,
+  `tipo` enum('Fisica','Moral') DEFAULT 'Fisica',
+  `RFC` varchar(13) DEFAULT NULL,
+  PRIMARY KEY (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0027 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+--------------------+-----------+--------+---------------+
+| id_cliente | nombre             | apellidos | tipo   | RFC           |
++------------+--------------------+-----------+--------+---------------+
+|          4 | Abarrotes El Güero | NULL      | Fisica | GUEA850101TX1 |
+|          5 | PEDRO              | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola              | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela             | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse               | NULL      | Fisica | LAPI900722H12 |
++------------+--------------------+-----------+--------+---------------+
+5 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+2 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into venta(fecha, id_cliente) value("2026-12-12", 7);
+Query OK, 1 row affected (0.0143 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        3 | 2026-03-20 |          7 |
+|        5 | 2026-12-12 |          7 |
++----------+------------+------------+
+3 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from cliente where id_cliente = 5;
+Query OK, 1 row affected (0.0162 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |       NULL |
+|        3 | 2026-03-20 |          7 |
+|        5 | 2026-12-12 |          7 |
++----------+------------+------------+
+3 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table direccion(id_direccion int not null auto_increment key, direccion varchar(100) not null);
+Query OK, 0 rows affected (0.0366 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table direccion add column id_cliente int not null;
+Query OK, 0 rows affected (0.0688 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table direccion drop column id_cliente;
+Query OK, 0 rows affected (0.0585 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table direccion add column id_cliente int;
+Query OK, 0 rows affected (0.0612 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table direccion add constraint foreign key (id_cliente) references cliente(id_cliente) on delete set null on update cascade;
+Query OK, 0 rows affected (0.0905 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  create table categoria(id_categoria int not null auto_increment key, categoria varchar(30));
+Query OK, 0 rows affected (0.0343 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table producto add column id_categoria int;
+Query OK, 0 rows affected (0.0371 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table producto add constraint foreign key (id_categoria) references categoria(id_categoria) on delete restrict on update cascade;
+Query OK, 4 rows affected (0.0780 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from producto;
++----+---------------+--------+--------------+
+| id | nombre        | precio | id_categoria |
++----+---------------+--------+--------------+
+|  1 | Jabón 150g    |  18.50 |         NULL |
+|  2 | Detergente 1L |  45.00 |         NULL |
+|  3 | Leche 1L      |  27.50 |         NULL |
+|  4 | Pasta Dental  |  38.00 |         NULL |
++----+---------------+--------+--------------+
+4 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > desc categoria;
++--------------+-------------+------+-----+---------+----------------+
+| Field        | Type        | Null | Key | Default | Extra          |
++--------------+-------------+------+-----+---------+----------------+
+| id_categoria | int         | NO   | PRI | NULL    | auto_increment |
+| categoria    | varchar(30) | YES  |     | NULL    |                |
++--------------+-------------+------+-----+---------+----------------+
+2 rows in set (0.0042 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into categoria(categoria) values("Limpieza"), ("Higiene Personal"), ("Alimentos"), ("Electronicos");
+Query OK, 4 rows affected (0.0150 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  update producto set id_categoria = 1 where id = 1;
+Query OK, 1 row affected (0.0140 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > ^C
+ MySQL  localhost:3306 ssl  taller2  SQL >  update producto set id_categoria = 2 where id=1;
+Query OK, 1 row affected (0.0499 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > update producto set id_categoria = 1 where id=2;
+Query OK, 1 row affected (0.0041 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > update producto set id_categoria = 3 where id=3;
+Query OK, 1 row affected (0.0143 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > update producto set id_categoria = 2 where id=4;
+Query OK, 1 row affected (0.0030 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from producto;
++----+---------------+--------+--------------+
+| id | nombre        | precio | id_categoria |
++----+---------------+--------+--------------+
+|  1 | Jabón 150g    |  18.50 |            2 |
+|  2 | Detergente 1L |  45.00 |            1 |
+|  3 | Leche 1L      |  27.50 |            3 |
+|  4 | Pasta Dental  |  38.00 |            2 |
++----+---------------+--------+--------------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from categoria;
++--------------+------------------+
+| id_categoria | categoria        |
++--------------+------------------+
+|            1 | Limpieza         |
+|            2 | Higiene Personal |
+|            3 | Alimentos        |
+|            4 | Electronicos     |
++--------------+------------------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > desc direccion;
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| id_direccion | int          | NO   | PRI | NULL    | auto_increment |
+| direccion    | varchar(100) | NO   |     | NULL    |                |
+| id_cliente   | int          | YES  | MUL | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+3 rows in set (0.0017 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+--------------------+-----------+--------+---------------+
+| id_cliente | nombre             | apellidos | tipo   | RFC           |
++------------+--------------------+-----------+--------+---------------+
+|          4 | Abarrotes El Güero | NULL      | Fisica | GUEA850101TX1 |
+|          6 | Paola              | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela             | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse               | NULL      | Fisica | LAPI900722H12 |
++------------+--------------------+-----------+--------+---------------+
+4 rows in set (0.0024 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into direccion(direccion, id_Cliente) values("Sahuaros", 4), ("2 de Junio", 6), ("CDP", 7), ("Desierto del Sahara", 9);
+Query OK, 4 rows affected (0.0147 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > update cliente set nombre = "Mateo" where id_cliente = 4;
+Query OK, 1 row affected (0.0159 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from direccion;
++--------------+---------------------+------------+
+| id_direccion | direccion           | id_cliente |
++--------------+---------------------+------------+
+|            1 | Sahuaros            |          4 |
+|            2 | 2 de Junio          |          6 |
+|            3 | CDP                 |          7 |
+|            4 | Desierto del Sahara |          9 |
++--------------+---------------------+------------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+--------+-----------+--------+---------------+
+| id_cliente | nombre | apellidos | tipo   | RFC           |
++------------+--------+-----------+--------+---------------+
+|          4 | Mateo  | NULL      | Fisica | GUEA850101TX1 |
+|          6 | Paola  | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse   | NULL      | Fisica | LAPI900722H12 |
++------------+--------+-----------+--------+---------------+
+4 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from categoria;
++--------------+------------------+
+| id_categoria | categoria        |
++--------------+------------------+
+|            1 | Limpieza         |
+|            2 | Higiene Personal |
+|            3 | Alimentos        |
+|            4 | Electronicos     |
++--------------+------------------+
+4 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from producto;
++----+---------------+--------+--------------+
+| id | nombre        | precio | id_categoria |
++----+---------------+--------+--------------+
+|  1 | Jabón 150g    |  18.50 |            2 |
+|  2 | Detergente 1L |  45.00 |            1 |
+|  3 | Leche 1L      |  27.50 |            3 |
+|  4 | Pasta Dental  |  38.00 |            2 |
++----+---------------+--------+--------------+
+4 rows in set (0.0005 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >

@@ -1,0 +1,300 @@
+EVA_2_2_UPDATE_DELETE_CASCADE
+Microsoft Windows [Versión 10.0.26100.6584]
+(c) Microsoft Corporation. Todos los derechos reservados.
+
+C:\Users\Hp>mysqlsh
+MySQL Shell 8.0.44
+
+Copyright (c) 2016, 2025, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect --mc root@localhost
+Creating a Classic session to 'root@localhost'
+Fetching global names for auto-completion... Press ^C to stop.
+Your MySQL connection id is 10
+Server version: 8.0.44 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:3306 ssl  SQL > use taller2;
+Default schema set to `taller2`.
+Fetching global names, object names from `taller2` for auto-completion... Press ^C to stop.
+ MySQL  localhost:3306 ssl  taller2  SQL > show tables;
++-------------------+
+| Tables_in_taller2 |
++-------------------+
+| cliente           |
+| producto          |
+| venta             |
+| venta_detalle     |
++-------------------+
+4 rows in set (0.0016 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from clientes;
+ERROR: 1146 (42S02): Table 'taller2.clientes' doesn't exist
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          1 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          3 | Papelería El Lápiz    | NULL      | Fisica | LAPI900722H12 |
+|          4 | Tacos El Pastorcito   | NULL      | Fisica | PAS081130M45  |
++------------+-----------------------+-----------+--------+---------------+
+4 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from producto;
++----+---------------+--------+
+| id | nombre        | precio |
++----+---------------+--------+
+|  1 | Jabón 150g    |  18.50 |
+|  2 | Detergente 1L |  45.00 |
+|  3 | Leche 1L      |  27.50 |
+|  4 | Pasta Dental  |  38.00 |
++----+---------------+--------+
+4 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          6 |
+|        3 | 2026-03-20 |          7 |
+|        4 | 2026-04-30 |          8 |
++----------+------------+------------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                4 |        2 |           1 |        5 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
++------------------+----------+-------------+----------+
+6 rows in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into cliente (nombre, apellidos, tipo, RFC)
+                                        -> values ('PEDRO', 'GOMEZ', 'Fisica', 'WRFAED123456');
+Query OK, 1 row affected (0.0342 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          1 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          3 | Papelería El Lápiz    | NULL      | Fisica | LAPI900722H12 |
+|          4 | Tacos El Pastorcito   | NULL      | Fisica | PAS081130M45  |
+|          5 | PEDRO                 | GOMEZ     | Fisica | WRFAED123456  |
++------------+-----------------------+-----------+--------+---------------+
+5 rows in set (0.0010 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta add constraint foreign key (id_cliente) references cliente(id_cliente);
+ERROR: 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`taller2`.`#sql-17a8_a`, CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`))
+ MySQL  localhost:3306 ssl  taller2  SQL >  insert into cliente (id_cliente, nombre, apellidos, tipo, RFC)
+                                        -> values (6, 'Paola', 'Sanchez', 'Fisica', 'CLI6RFC12345'),
+                                        ->  (7, 'Pamela', 'Estrada', 'Fisica', '323srvs234244');
+Query OK, 2 rows affected (0.0147 sec)
+
+Records: 2  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from venta where id_cliente=8;
+Query OK, 1 row affected (0.0138 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta add constraint foreign key (id_cliente) references cliente(id_cliente);
+Query OK, 3 rows affected (0.1160 sec)
+
+Records: 3  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > desc venta;
++------------+------+------+-----+---------+----------------+
+| Field      | Type | Null | Key | Default | Extra          |
++------------+------+------+-----+---------+----------------+
+| id_venta   | int  | NO   | PRI | NULL    | auto_increment |
+| fecha      | date | NO   |     | NULL    |                |
+| id_cliente | int  | NO   | MUL | NULL    |                |
++------------+------+------+-----+---------+----------------+
+3 rows in set (0.0144 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                         |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0118 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > desc venta_detalle;
++------------------+------+------+-----+---------+----------------+
+| Field            | Type | Null | Key | Default | Extra          |
++------------------+------+------+-----+---------+----------------+
+| id_venta_detalle | int  | NO   | PRI | NULL    | auto_increment |
+| id_venta         | int  | NO   |     | NULL    |                |
+| id_producto      | int  | NO   |     | NULL    |                |
+| cantidad         | int  | NO   |     | NULL    |                |
++------------------+------+------+-----+---------+----------------+
+4 rows in set (0.0029 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta_detalle add constraint foreign key (id_venta) references venta(id_venta);
+Query OK, 6 rows affected (0.0918 sec)
+
+Records: 6  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  alter table venta_detalle add constraint foreign key (id_producto) references producto(id_producto);
+ERROR: 3734 (HY000): Failed to add the foreign key constraint. Missing column 'id_producto' for constraint 'venta_detalle_ibfk_2' in the referenced table 'producto'
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta_detalle add constraint fk_venta_detalle_producto foreign key (id_producto) references producto(id_producto);
+ERROR: 3734 (HY000): Failed to add the foreign key constraint. Missing column 'id_producto' for constraint 'fk_venta_detalle_producto' in the referenced table 'producto'
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta_detalle add constraint foreign key (id) references producto(id);
+ERROR: 1072 (42000): Key column 'id' doesn't exist in table
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta_detalle add constraint foreign key (id_producto) references producto(id);
+Query OK, 6 rows affected (0.0963 sec)
+
+Records: 6  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > show create venta_detalle;
+ERROR: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'venta_detalle' at line 1
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta_detalle;
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table         | Create Table                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta_detalle | CREATE TABLE `venta_detalle` (
+  `id_venta_detalle` int NOT NULL AUTO_INCREMENT,
+  `id_venta` int NOT NULL,
+  `id_producto` int NOT NULL,
+  `cantidad` int NOT NULL,
+  PRIMARY KEY (`id_venta_detalle`),
+  KEY `id_venta` (`id_venta`),
+  KEY `id_producto` (`id_producto`),
+  CONSTRAINT `venta_detalle_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `venta` (`id_venta`),
+  CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++---------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0009 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into venta_detalle(id_venta, id_producto, cantidad) value(3, 5, 7);
+ERROR: 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`taller2`.`venta_detalle`, CONSTRAINT `venta_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`))
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into venta_detalle(id_venta, id_producto, cantidad) value(3, 4, 7);
+Query OK, 1 row affected (0.0140 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                         |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0021 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >  alter table venta drop constraint venta_ibfk_1;
+Query OK, 0 rows affected (0.0372 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta add constraint foreign key (id_cliente) references cliente(id_cliente) on delete restrict on update restrict;
+Query OK, 3 rows affected (0.0899 sec)
+
+Records: 3  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          1 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          3 | Papelería El Lápiz    | NULL      | Fisica | LAPI900722H12 |
+|          4 | Tacos El Pastorcito   | NULL      | Fisica | PAS081130M45  |
+|          5 | PEDRO                 | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola                 | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela                | Estrada   | Fisica | 323srvs234244 |
++------------+-----------------------+-----------+--------+---------------+
+7 rows in set (0.0025 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          6 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+3 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >  delete from cliente where id_cliente = 5;
+ERROR: 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`taller2`.`venta`, CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE RESTRICT ON UPDATE RESTRICT)
+ MySQL  localhost:3306 ssl  taller2  SQL >  update cliente set id_cliente = 8 where id_cliente = 5;
+ERROR: 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`taller2`.`venta`, CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE RESTRICT ON UPDATE RESTRICT)
+ MySQL  localhost:3306 ssl  taller2  SQL >  update cliente set nombre = "JOse" where id_cliente = 3;
+Query OK, 1 row affected (0.0136 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > update venta set id_Cliente = 2 where id_venta = 2;
+Query OK, 1 row affected (0.0139 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          2 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+3 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > update cliente set id_cliente = 9 where id_cliente = 3;
+Query OK, 1 row affected (0.0145 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > show create table venta;
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                                                                                                                                                                                                                               |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| venta | CREATE TABLE `venta` (
+  `id_venta` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `id_cliente` int NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  KEY `id_cliente` (`id_cliente`),
+  CONSTRAINT `venta_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta drop constraint venta_ibfk_1;
+Query OK, 0 rows affected (0.0233 sec)
+
+Records: 0  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > alter table venta add constraint foreign key (id_cliente) references cliente(id_cliente) on delete cascade on update cascade;
+Query OK, 3 rows affected (0.0886 sec)
+
+Records: 3  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >  select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          2 |
+|        3 | 2026-03-20 |          7 |
++----------+------------+------------+
+3 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from cliene where id_Cliente = 2;
+ERROR: 1146 (42S02): Table 'taller2.cliene' doesn't exist
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from cliente where id_Cliente = 2;
+ERROR: 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`taller2`.`venta_detalle`, CONSTRAINT `venta_detalle_ibfk_1` FOREIGN KEY (`id_venta`) REFERENCES `venta` (`id_venta`))
+ MySQL  localhost:3306 ssl  taller2  SQL > delete from cliente where id_cliente = 4;
+Query OK, 1 row affected (0.0139 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          1 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          5 | PEDRO                 | GOMEZ     | Fisica | WRFAED123456  |
+|          6 | Paola                 | Sanchez   | Fisica | CLI6RFC12345  |
+|          7 | Pamela                | Estrada   | Fisica | 323srvs234244 |
+|          9 | JOse                  | NULL      | Fisica | LAPI900722H12 |
++------------+-----------------------+-----------+--------+---------------+
+6 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > update cliente set id_cliente = 6 where id_cliente = 1;
+ERROR: 1062 (23000): Duplicate entry '6' for key 'cliente.PRIMARY'
+ MySQL  localhost:3306 ssl  taller2  SQL > update cliente set id_cliente = 4 where id_cliente = 1;
+Query OK, 1 row affected (0.0148 sec)
+
+Rows matched: 1  Changed: 1  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL >

@@ -1,0 +1,101 @@
+EVA_2_1_INTEGRIDAD_REFERENCIAL
+
+Microsoft Windows [Versión 10.0.26100.6584]
+(c) Microsoft Corporation. Todos los derechos reservados.
+
+C:\Users\Hp>mysqlsh
+MySQL Shell 8.0.44
+
+Copyright (c) 2016, 2025, Oracle and/or its affiliates.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect --mc root@localhost
+Creating a Classic session to 'root@localhost'
+Fetching global names for auto-completion... Press ^C to stop.
+Your MySQL connection id is 13
+Server version: 8.0.44 MySQL Community Server - GPL
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:3306 ssl  SQL > create database taller2;
+ERROR: 1007 (HY000): Can't create database 'taller2'; database exists
+ MySQL  localhost:3306 ssl  SQL > drop database taller2;
+Query OK, 4 rows affected (0.0748 sec)
+ MySQL  localhost:3306 ssl  SQL > create database taller2;
+Query OK, 1 row affected (0.0174 sec)
+ MySQL  localhost:3306 ssl  SQL > use taller2;
+Default schema set to `taller2`.
+Fetching global names, object names from `taller2` for auto-completion... Press ^C to stop.
+ MySQL  localhost:3306 ssl  taller2  SQL > ^C
+ MySQL  localhost:3306 ssl  taller2  SQL > create table producto(
+                                        -> id int not null auto_increment key,
+                                        -> nombre varchar(50) not null,
+                                        -> precio decimal(8,2));
+Query OK, 0 rows affected (0.0498 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table cliente(id_cliente int not null auto_increment key, nombre varchar(50) not null, apellidos varchar(50), tipo enum("Fisica", "Moral") default "fisica", RFC varchar(13));
+Query OK, 0 rows affected (0.0393 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table venta(id_venta int not null auto_increment key, fecha date not null, id_cliente int not null);
+Query OK, 0 rows affected (0.0362 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > create table venta_detalle(id_venta_detalle int not null auto_increment key, id_venta int not null, id_producto int not null, cantidad int not null);
+Query OK, 0 rows affected (0.0418 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into producto (nombre, precio) values ('Jabón 150g', 18.50), ('Detergente 1L', 45.00), ('Leche 1L', 27.50), ('Pasta Dental', 38.00);
+Query OK, 4 rows affected (0.0170 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > INSERT INTO cliente(nombre, rfc) VALUES ("Abarrotes El Güero", "GUEA850101TX1"), ("Carnicería La Selecta", "SEL020315KJ4"), ("Papelería El Lápiz", "LAPI900722H12"), ("Tacos El Pastorcito", "PAS081130M45");
+Query OK, 4 rows affected (0.0069 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from cliente;
++------------+-----------------------+-----------+--------+---------------+
+| id_cliente | nombre                | apellidos | tipo   | RFC           |
++------------+-----------------------+-----------+--------+---------------+
+|          1 | Abarrotes El Güero    | NULL      | Fisica | GUEA850101TX1 |
+|          2 | Carnicería La Selecta | NULL      | Fisica | SEL020315KJ4  |
+|          3 | Papelería El Lápiz    | NULL      | Fisica | LAPI900722H12 |
+|          4 | Tacos El Pastorcito   | NULL      | Fisica | PAS081130M45  |
++------------+-----------------------+-----------+--------+---------------+
+4 rows in set (0.0007 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from producto;
++----+---------------+--------+
+| id | nombre        | precio |
++----+---------------+--------+
+|  1 | Jabón 150g    |  18.50 |
+|  2 | Detergente 1L |  45.00 |
+|  3 | Leche 1L      |  27.50 |
+|  4 | Pasta Dental  |  38.00 |
++----+---------------+--------+
+4 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > INSERT INTO venta(fecha, id_cliente) VALUES ("2026-01-15", 5), ("2026-02-14", 6), ("2026-03-20", 7), ("2026-04-30", 8);
+Query OK, 4 rows affected (0.0185 sec)
+
+Records: 4  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta;
++----------+------------+------------+
+| id_venta | fecha      | id_cliente |
++----------+------------+------------+
+|        1 | 2026-01-15 |          5 |
+|        2 | 2026-02-14 |          6 |
+|        3 | 2026-03-20 |          7 |
+|        4 | 2026-04-30 |          8 |
++----------+------------+------------+
+4 rows in set (0.0006 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL > insert into venta_detalle(id_venta, id_producto, cantidad) values(1, 1, 5), (1, 2, 3), (1, 2, 1), (2, 1, 5), (3, 2, 1), (3, 1, 2);
+Query OK, 6 rows affected (0.0173 sec)
+
+Records: 6  Duplicates: 0  Warnings: 0
+ MySQL  localhost:3306 ssl  taller2  SQL > select * from venta_detalle;
++------------------+----------+-------------+----------+
+| id_venta_detalle | id_venta | id_producto | cantidad |
++------------------+----------+-------------+----------+
+|                1 |        1 |           1 |        5 |
+|                2 |        1 |           2 |        3 |
+|                3 |        1 |           2 |        1 |
+|                4 |        2 |           1 |        5 |
+|                5 |        3 |           2 |        1 |
+|                6 |        3 |           1 |        2 |
++------------------+----------+-------------+----------+
+6 rows in set (0.0008 sec)
+ MySQL  localhost:3306 ssl  taller2  SQL >
